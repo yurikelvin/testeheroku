@@ -26,6 +26,8 @@ import br.com.ufcg.domain.Usuario;
 import br.com.ufcg.domain.vo.AlterarDadosForm;
 import br.com.ufcg.domain.vo.LoginForm;
 import br.com.ufcg.domain.vo.NovaSenhaForm;
+import br.com.ufcg.mappers.RecuperarSenhaMapper;
+import br.com.ufcg.services.UsuarioService;
 import br.com.ufcg.services.UsuarioService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -187,10 +189,11 @@ public class UsuarioController {
 	}
 	
 	@RequestMapping(value = "/recuperarSenha", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public ResponseEntity<Response> solicitaRecuperacaoSenha(@RequestBody String email) {
+	public ResponseEntity<Response> solicitaRecuperacaoSenha(@RequestBody RecuperarSenhaMapper recuperarSenha) {
 		Response response;
 		
 		try {
+			String email = recuperarSenha.getEmail();
 			usuarioService.solicitaRecuperacaoSenha(email);
 			response = new Response("Um email foi enviado com as instruções!", HttpStatus.OK.value());
 			return new ResponseEntity<>(response, HttpStatus.OK);
