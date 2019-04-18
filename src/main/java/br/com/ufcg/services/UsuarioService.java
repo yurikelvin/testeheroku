@@ -235,6 +235,7 @@ public class UsuarioService {
 			List<Especialidade> especialidades = especialidadeService.getEspecialidadesValidas(novaEspecialidades);
 			if (especialidades.size() > 0) {
 				((Fornecedor) usuario).setListaEspecialidades(especialidades);
+				usuarioRepository.saveAndFlush(usuario);
 			} else {
 				throw new Exception("Forneca ao menos uma especialidade valida!");
 			}
