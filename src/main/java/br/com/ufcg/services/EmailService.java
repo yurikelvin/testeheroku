@@ -1,11 +1,10 @@
 package br.com.ufcg.services;
 
+import br.com.ufcg.domain.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import br.com.ufcg.domain.Usuario;
 
 @Service
 public class EmailService {
@@ -21,7 +20,7 @@ public class EmailService {
         		"Uma recuperação de senha foi solicitada para sua conta no Trampo." +
         		"Segue os novos dados: " +
         		System.lineSeparator() +
-        		"Email:" + usuario.getEmail() + System.lineSeparator() +
+        		"Login: " + usuario.getLogin() + System.lineSeparator() +
         		"Nova senha: " + novaSenha + System.lineSeparator() +
         		"A equipe Trampo agradece! Até mais!");
         message.setTo(usuario.getEmail().toLowerCase());
@@ -33,7 +32,6 @@ public class EmailService {
             mailSender.send(message);
             return "Email enviado com sucesso!";
         } catch (Exception e) {
-            e.printStackTrace();
             return e.getMessage();
         }
     }

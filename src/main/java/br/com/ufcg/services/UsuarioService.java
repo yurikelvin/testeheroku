@@ -1,12 +1,5 @@
 package br.com.ufcg.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.ufcg.dao.UsuarioDAO;
 import br.com.ufcg.domain.Especialidade;
 import br.com.ufcg.domain.Fornecedor;
@@ -17,6 +10,12 @@ import br.com.ufcg.domain.vo.NovaSenhaForm;
 import br.com.ufcg.repositories.UsuarioRepository;
 import br.com.ufcg.util.validadores.SenhaFormValidador;
 import br.com.ufcg.util.validadores.UsuarioValidador;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @Service
 public class UsuarioService {
@@ -31,13 +30,13 @@ public class UsuarioService {
 	private static final String LOGIN_ATUAL_IGUAL_NOVO = "O novo login tem que ser diferente do antigo!";
 
 	@Autowired
-	UsuarioRepository usuarioRepository;
+    UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	EmailService emailService;
+    EmailService emailService;
 
 	@Autowired
-	EspecialidadeService especialidadeService;
+    EspecialidadeService especialidadeService;
 	
 	public Usuario getById(Long id) throws Exception {
 		return usuarioRepository.findById(id)
@@ -271,6 +270,7 @@ public class UsuarioService {
 	}
 
 	public void solicitaRecuperacaoSenha(String email) throws Exception {
+		UsuarioValidador.validaEmail(email);
 		Usuario usuario = getByEmail(email.toLowerCase());
 		String novaSenha = gerarSenha();
 		usuario.setSenha(novaSenha);
