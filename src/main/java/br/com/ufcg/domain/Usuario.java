@@ -28,7 +28,7 @@ public abstract class Usuario implements Serializable {
 	@Column(name = "TX_LOGIN")
 	private String login;
 
-	@Column(name = "CD_FOTO_PERFIL", nullable = false)
+	@Column(name = "FOTO_PERFIL", nullable = false)
 	@Lob
 	private String fotoPerfil;
 
