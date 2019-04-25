@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.ufcg.dao.UsuarioDAO;
 import br.com.ufcg.domain.enums.TipoUsuario;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "TAB_USUARIO", uniqueConstraints = @UniqueConstraint(columnNames = "TX_LOGIN", name = "login"))
@@ -30,6 +31,7 @@ public abstract class Usuario implements Serializable {
 
 	@Column(name = "FOTO_PERFIL", nullable = false)
 	@Lob
+	@Type(type = "org.hibernate.type.TextType")
 	private String fotoPerfil;
 
 	@Column(name = "TX_EMAIL", nullable = false)

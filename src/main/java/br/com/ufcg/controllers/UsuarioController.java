@@ -161,7 +161,6 @@ public class UsuarioController {
 		
 		Response response;
 		try {
-			System.out.println(cliente.getFotoPerfil());
 			Usuario retorno = usuarioService.criarUsuario(cliente);
 			response = new Response("Usuario cadastrado com sucesso!", HttpStatus.OK.value(), retorno);
 			return new ResponseEntity<>(response, HttpStatus.OK);
