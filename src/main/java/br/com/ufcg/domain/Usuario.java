@@ -29,7 +29,7 @@ public abstract class Usuario implements Serializable {
 	@Column(name = "TX_LOGIN")
 	private String login;
 
-	@Column(name = "FOTO_PERFIL", nullable = false)
+	@Column(name = "CD_FOTO_PERFIL", nullable = false)
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
 	private String fotoPerfil;
