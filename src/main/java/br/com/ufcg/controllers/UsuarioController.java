@@ -82,6 +82,7 @@ public class UsuarioController {
 				            .setExpiration(new Date(System.currentTimeMillis() + HORAS_NO_DIA * HORAS))
 				            .compact();
 
+        usuAutenticado.setFotoPerfil(usuarioService.getFotoPerfil(usuario.getLogin()));
         response.setMessage(LOGIN_SUCESSO);
         response.setData(new LoginResponse(token, usuAutenticado));
         response.setStatus(HttpStatus.OK.value());
