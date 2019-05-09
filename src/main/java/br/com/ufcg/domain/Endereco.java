@@ -25,6 +25,9 @@ public class Endereco {
     @Column(name = "TX_BAIRRO")
     private String bairro;
 
+    @Column(name = "CD_COMPLEMENTO", nullable = false)
+    private String complemento;
+
     public Endereco() {}
 
     public String getRua() {
@@ -59,6 +62,14 @@ public class Endereco {
         this.id = id;
     }
 
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,4 +84,6 @@ public class Endereco {
     public int hashCode() {
         return Objects.hash(rua, numero, bairro);
     }
+
+
 }
