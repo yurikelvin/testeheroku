@@ -83,7 +83,7 @@ public class UsuarioController {
 				            .compact();
 
         response.setMessage(LOGIN_SUCESSO);
-        response.setData(new LoginResponse(token));
+        response.setData(new LoginResponse(token, usuAutenticado));
         response.setStatus(HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -204,13 +204,19 @@ public class UsuarioController {
 	
 	private class LoginResponse {
         String token;
+        Usuario usuario;
 
-        public LoginResponse(String token) {
+        public LoginResponse(String token, Usuario usuario) {
             this.token = token;
+            this.usuario = usuario;
         }
 
         public String getToken() {
             return token;
         }
+
+		public Usuario getUsuario() {
+			return usuario;
+		}
     }
 }
