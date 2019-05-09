@@ -50,6 +50,7 @@ public abstract class Usuario implements Serializable {
 	@Column(name = "CD_FOTO_PERFIL", nullable = false)
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@Basic(fetch = FetchType.LAZY)
 	private String fotoPerfil;
 
 	@Column(name = "TX_EMAIL", nullable = false)
