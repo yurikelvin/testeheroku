@@ -16,6 +16,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.ufcg.dao.UsuarioDAO;
 import br.com.ufcg.domain.enums.TipoUsuario;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "TAB_USUARIO", uniqueConstraints = @UniqueConstraint(columnNames = "TX_LOGIN", name = "login"))
@@ -46,6 +48,8 @@ public abstract class Usuario implements Serializable {
 	private String login;
 
 	@Column(name = "CD_FOTO_PERFIL", nullable = false)
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
 	private String fotoPerfil;
 
 	@Column(name = "TX_EMAIL", nullable = false)
