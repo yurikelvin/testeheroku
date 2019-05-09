@@ -1,5 +1,6 @@
 package br.com.ufcg.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +20,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	@Query("SELECT u FROM Usuario u WHERE u.email=:email")
 	Usuario findByEmail(@Param("email") String email);
 
-	@Query(value="SELECT CD_FOTO_PERFIL FROM TAB_USUARIO u WHERE u.TX_LOGIN=:login", nativeQuery = true)
+	@EntityGraph(attributePaths = { "fotoPerfil" })
+	@Query("SELECT u.fotoPerfil FROM Usuario u WHERE u.login=:login")
 	String getFotoPerfil(@Param("login") String login);
 }
