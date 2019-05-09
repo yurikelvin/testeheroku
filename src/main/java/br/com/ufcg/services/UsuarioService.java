@@ -295,8 +295,8 @@ public class UsuarioService {
 		return senha;
 	}
 
-	public String getFotoPerfil(String login) {
-		return usuarioRepository.getFotoPerfil(login);
+	public Usuario getUsuarioComFotoPerfil(String login) {
+		return usuarioRepository.getUsuarioComFotoPerfil(login);
 	}
 }
 

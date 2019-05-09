@@ -21,6 +21,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	Usuario findByEmail(@Param("email") String email);
 
 	@EntityGraph(attributePaths = { "fotoPerfil" })
-	@Query("SELECT u.fotoPerfil FROM Usuario u WHERE u.login=:login")
-	String getFotoPerfil(@Param("login") String login);
+	@Query("SELECT u FROM Usuario u WHERE u.login=:login")
+	Usuario getUsuarioComFotoPerfil(@Param("login") String login);
 }
