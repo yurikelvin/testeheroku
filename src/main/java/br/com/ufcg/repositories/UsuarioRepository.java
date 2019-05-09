@@ -19,6 +19,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	@Query("SELECT u FROM Usuario u WHERE u.email=:email")
 	Usuario findByEmail(@Param("email") String email);
 
-	@Query(value="SELECT CD_FOTO_PERFIL FROM TAB_USUARIO u WHERE u.login=:login", nativeQuery = true)
+	@Query(value="SELECT CD_FOTO_PERFIL FROM TAB_USUARIO u WHERE u.TX_LOGIN=:login", nativeQuery = true)
 	String getFotoPerfil(@Param("login") String login);
 }
