@@ -34,6 +34,6 @@ public class Cliente extends Usuario {
 
 	@Override
 	public UsuarioDAO toDAO() {
-		return new ClienteDAO(this.getId(), this.getLogin(), this.getNomeCompleto(), this.getEmail(), this.getFotoPerfil(), this.getTipo());
+		return new ClienteDAO(this.getId(), this.getLogin(), this.getNomeCompleto(), this.getEmail(), this.getFotoPerfil(), this.getTipo(), this.getAvaliacaoMedia());
 	}
 }

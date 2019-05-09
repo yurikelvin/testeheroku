@@ -4,8 +4,8 @@ import br.com.ufcg.domain.enums.TipoUsuario;
 
 public class ClienteDAO extends UsuarioDAO {
 
-	public ClienteDAO(Long id, String login, String nomeCompleto, String email, String fotoPerfil, TipoUsuario tipoUsuario) {
-		super(id, login, nomeCompleto, email, fotoPerfil, tipoUsuario);
+	public ClienteDAO(Long id, String login, String nomeCompleto, String email, String fotoPerfil, TipoUsuario tipoUsuario, double avaliacao) {
+		super(id, login, nomeCompleto, email, fotoPerfil, tipoUsuario, avaliacao);
 	}
 
 }

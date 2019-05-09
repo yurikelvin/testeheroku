@@ -9,14 +9,16 @@ public abstract class UsuarioDAO {
 	private String email;
 	private String fotoPerfil;
 	private TipoUsuario tipo;
-	
-	public UsuarioDAO(long id, String login, String nomeCompleto, String email, String fotoPerfil, TipoUsuario tipo) {
+	private Double avaliacao;
+
+	public UsuarioDAO(long id, String login, String nomeCompleto, String email, String fotoPerfil, TipoUsuario tipo, Double avaliacao) {
 		this.id = id;
 		this.login = login;
 		this.nomeCompleto = nomeCompleto;
 		this.email = email;
 		this.fotoPerfil = fotoPerfil;
 		this.tipo = tipo;
+		this.setAvaliacao(avaliacao);
 	}
 
 	public Long getId() {
@@ -98,4 +100,14 @@ public abstract class UsuarioDAO {
 	public String toString() {
 		return "Usuario " + this.id + " - Login: " + this.login + ", Nome: " + this.nomeCompleto + ", Email: " + this.email + "." + System.lineSeparator();
 	}
+
+	public double getAvaliacao() {
+		return avaliacao;
+	}
+
+	public void setAvaliacao(double avaliacao) {
+		this.avaliacao = avaliacao;
+	}
+
+
 }
