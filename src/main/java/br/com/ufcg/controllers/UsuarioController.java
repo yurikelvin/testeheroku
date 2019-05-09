@@ -81,8 +81,8 @@ public class UsuarioController {
 				            .signWith(SignatureAlgorithm.HS512, SECRET)
 				            .setExpiration(new Date(System.currentTimeMillis() + HORAS_NO_DIA * HORAS))
 				            .compact();
-		System.out.println("fotoPerfil eh: " + usuarioService.getUsuarioComFotoPerfil(usuario.getLogin()).getFotoPerfil());
-        usuAutenticado.setFotoPerfil(usuarioService.getUsuarioComFotoPerfil(usuario.getLogin()).getFotoPerfil());
+		//System.out.println("fotoPerfil eh: " + usuarioService.getUsuarioComFotoPerfil(usuario.getLogin()).getFotoPerfil());
+        //usuAutenticado.setFotoPerfil(usuarioService.getUsuarioComFotoPerfil(usuario.getLogin()).getFotoPerfil());
         response.setMessage(LOGIN_SUCESSO);
         response.setData(new LoginResponse(token, usuAutenticado));
         response.setStatus(HttpStatus.OK.value());
