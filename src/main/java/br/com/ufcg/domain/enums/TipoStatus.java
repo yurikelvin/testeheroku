@@ -2,7 +2,7 @@ package br.com.ufcg.domain.enums;
 
 public enum TipoStatus {
 	
-    EM_ABERTO("Aberto"),
+    AGUARDANDO_OFERTAS("Aguardando Ofertas"),
     ACEITO("Aceito"),
     CANCELADO("Cancelado"),
     CONCLUIDO("Concluído");

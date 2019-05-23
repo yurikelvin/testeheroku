@@ -3,7 +3,9 @@ package br.com.ufcg.dao;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
+import br.com.ufcg.domain.Oferta;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.com.ufcg.domain.Cliente;
@@ -29,10 +31,12 @@ public final class ServicoDAO {
 	private TipoStatus tipoStatus;
 	private Boolean isAvaliadoCliente;
 	private Boolean isAvaliadoFornecedor;
+	private List<Oferta> ofertasRecebidas;
+	private Oferta ofertaFinal;
 
 	public ServicoDAO(Long id, String tipo, String descricao, LocalDate data, LocalTime horario, BigDecimal valor,
 			Endereco endereco, Cliente cliente, Fornecedor fornecedor, TipoStatus tipoStatus, Boolean isAvaliadoCliente,
-			Boolean isAvaliadoFornecedor) {
+			Boolean isAvaliadoFornecedor, List<Oferta> ofertasRecebidas, Oferta ofertaFinal) {
 		this.id = id;
 		this.tipo = tipo;
 		this.descricao = descricao;
@@ -56,6 +60,8 @@ public final class ServicoDAO {
 		this.tipoStatus = tipoStatus;
 		this.isAvaliadoCliente = isAvaliadoCliente;
 		this.isAvaliadoFornecedor = isAvaliadoFornecedor;
+		this.ofertasRecebidas = ofertasRecebidas;
+		this.ofertaFinal = ofertaFinal;
 	}
 
 	public Long getId() {
@@ -152,5 +158,21 @@ public final class ServicoDAO {
 
 	public void setIsAvaliadoFornecedor(Boolean isAvaliadoFornecedor) {
 		this.isAvaliadoFornecedor = isAvaliadoFornecedor;
+	}
+
+	public List<Oferta> getOfertasRecebidas() {
+		return ofertasRecebidas;
+	}
+
+	public void setOfertasRecebidas(List<Oferta> ofertasRecebidas) {
+		this.ofertasRecebidas = ofertasRecebidas;
+	}
+
+	public Oferta getOfertaFinal() {
+		return ofertaFinal;
+	}
+
+	public void setOfertaFinal(Oferta ofertaFinal) {
+		this.ofertaFinal = ofertaFinal;
 	}
 }

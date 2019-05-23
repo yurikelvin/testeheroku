@@ -16,7 +16,7 @@ import br.com.ufcg.repositories.AvaliacaoRepository;
 @Service
 public class AvaliacaoService {
 	
-	public static final double MEDIA_INICIAL = 5.0;
+	public static final double MEDIA_INICIAL = 0;
 	
 	@Autowired
 	AvaliacaoRepository avaliacaoRepository;

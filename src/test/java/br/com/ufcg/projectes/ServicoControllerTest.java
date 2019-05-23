@@ -122,14 +122,10 @@ public class ServicoControllerTest {
 		uc.cadastrarFornecedor((Fornecedor) fornecedor2);
 		
 		endereco1 = new Endereco();
-		endereco1.setBairro("liberdade");
-		endereco1.setRua("rua souza e lima");
-		endereco1.setNumero("129");
+		
 		
 		endereco2 = new Endereco();
-		endereco2.setBairro("catole");
-		endereco2.setNumero("456");
-		endereco2.setRua("rua francisco");
+		
 		
 		data1 = LocalDate.now().plusDays(40);
 		data2 = LocalDate.now().plusDays(5);
@@ -403,7 +399,7 @@ public class ServicoControllerTest {
 	public void testClienteCancelaServicoValido() throws Exception {
 		Usuario cliente = us.getByLogin(this.cliente1.getLogin());
 		Servico servicoCadastrado = ss.criarServico(cliente, servico2);
-		assertEquals(TipoStatus.EM_ABERTO, servicoCadastrado.getStatus());
+		assertEquals(TipoStatus.AGUARDANDO_OFERTAS, servicoCadastrado.getStatus());
 		Servico servicoCancelado = ss.cancelarServicoCliente(servicoCadastrado, (Cliente) cliente);
 		assertEquals(TipoStatus.CANCELADO, servicoCancelado.getStatus());
 	}
@@ -416,7 +412,7 @@ public class ServicoControllerTest {
 		Usuario fornecedor = us.getByLogin(this.fornecedor2.getLogin());
 		
 		Servico servicoCadastrado = ss.criarServico(cliente2, servico1);
-		assertEquals(TipoStatus.EM_ABERTO, servicoCadastrado.getStatus());
+		assertEquals(TipoStatus.AGUARDANDO_OFERTAS, servicoCadastrado.getStatus());
 		
 		// Cliente tenta cancelar um servico que nao eh dele.
 		try {
@@ -425,7 +421,7 @@ public class ServicoControllerTest {
 			assertEquals("Você só pode cancelar serviços que foram solicitados por você!", e.getMessage());
 		}
 		
-		assertEquals(TipoStatus.EM_ABERTO, servicoCadastrado.getStatus());
+		assertEquals(TipoStatus.AGUARDANDO_OFERTAS, servicoCadastrado.getStatus());
 		
 		Servico servicoAceito = ss.setServicoParaFornecedor(servicoCadastrado, fornecedor);
 		Servico servicoConcluido = ss.concluirServico(servicoAceito, (Fornecedor) fornecedor);
@@ -448,7 +444,7 @@ public class ServicoControllerTest {
 		Usuario fornecedor = us.getByLogin(this.fornecedor2.getLogin());
 		
 		Servico servicoCadastrado = ss.criarServico(cliente1, servico1);
-		assertEquals(TipoStatus.EM_ABERTO, servicoCadastrado.getStatus());
+		assertEquals(TipoStatus.AGUARDANDO_OFERTAS, servicoCadastrado.getStatus());
 		
 		Servico servicoAceito = ss.setServicoParaFornecedor(servicoCadastrado, fornecedor);
 		assertEquals(TipoStatus.ACEITO, servicoAceito.getStatus());
@@ -457,7 +453,7 @@ public class ServicoControllerTest {
 		Servico servicoCanceladoPeloFornecedor = ss.cancelarServicoFornecedor(servicoAceito, (Fornecedor) fornecedor);
 		
 		assertEquals(null, servicoCanceladoPeloFornecedor.getFornecedor());
-		assertEquals(TipoStatus.EM_ABERTO, servicoCanceladoPeloFornecedor.getStatus());
+		assertEquals(TipoStatus.AGUARDANDO_OFERTAS, servicoCanceladoPeloFornecedor.getStatus());
 		
 	}
 	
@@ -471,7 +467,7 @@ public class ServicoControllerTest {
 		
 		
 		Servico servicoCadastrado = ss.criarServico(cliente, servico2);
-		assertEquals(TipoStatus.EM_ABERTO, servicoCadastrado.getStatus());
+		assertEquals(TipoStatus.AGUARDANDO_OFERTAS, servicoCadastrado.getStatus());
 		
 		Servico servicoAceito = ss.setServicoParaFornecedor(servicoCadastrado, fornecedor2);
 		assertEquals(TipoStatus.ACEITO, servicoAceito.getStatus());
@@ -479,7 +475,7 @@ public class ServicoControllerTest {
 		
 		
 		Servico servicoCadastrado2 = ss.criarServico(cliente2, servico1);
-		assertEquals(TipoStatus.EM_ABERTO, servicoCadastrado2.getStatus());
+		assertEquals(TipoStatus.AGUARDANDO_OFERTAS, servicoCadastrado2.getStatus());
 		
 		Servico servicoAceito2 = ss.setServicoParaFornecedor(servicoCadastrado2, fornecedor1);
 		assertEquals(TipoStatus.ACEITO, servicoAceito2.getStatus());

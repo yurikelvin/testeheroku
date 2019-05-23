@@ -2,18 +2,16 @@ package br.com.ufcg.services;
 
 import br.com.ufcg.domain.Especialidade;
 import br.com.ufcg.domain.Fornecedor;
+import br.com.ufcg.domain.Oferta;
+import br.com.ufcg.domain.*;
 import br.com.ufcg.dao.ServicoDAO;
-import br.com.ufcg.domain.Cliente;
-import br.com.ufcg.domain.Servico;
-import br.com.ufcg.domain.Usuario;
 import br.com.ufcg.domain.enums.TipoStatus;
+import br.com.ufcg.dto.ServicoDTO;
 import br.com.ufcg.repositories.ServicoRepository;
 import br.com.ufcg.util.validadores.ServicoValidador;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +28,10 @@ public class ServicoService {
     	if(!(cliente instanceof Cliente)) {
     		throw new Exception("Apenas clientes podem criar serviços!");
     	}
-    	
+
+		servico.setValor(new BigDecimal(0));
     	servico.setCliente((Cliente) cliente);
-    	servico.setStatus(TipoStatus.EM_ABERTO);
+    	servico.setStatus(TipoStatus.AGUARDANDO_OFERTAS);
         ServicoValidador.valida(servico);
         servico.setFornecedor(null);
         servico.setTipo(servico.getTipo().toLowerCase());
@@ -45,7 +44,61 @@ public class ServicoService {
 		Servico servicoCriado = servicoRepository.save(servico);
 		return servicoCriado;
     }
-   
+
+    public Servico adicionarOfertaNoServico(Long servicoId, Oferta oferta) throws Exception {
+    	this.verificaValidadeOferta(servicoId, oferta);
+
+        Servico servico = this.getServicoByID(servicoId);
+        oferta.setServico(servico);
+        servico.adicionaOferta(oferta);
+
+        Servico servicoAtualizado = servicoRepository.save(servico);
+        return servicoAtualizado;
+    }
+
+    private void verificaValidadeOferta(Long servicoId, Oferta oferta) throws Exception {
+		Iterator<Oferta> ofertasIterator = getOfertasServico(servicoId).iterator();
+
+		boolean achouOfertaDoFornecedor = false;
+		while(ofertasIterator.hasNext() && !achouOfertaDoFornecedor) {
+			Oferta ofertaNoServico = ofertasIterator.next();
+			if(ofertaNoServico.getFornecedor().getId().equals(oferta.getFornecedor().getId())) {
+				achouOfertaDoFornecedor = true;
+			}
+		}
+
+		if(achouOfertaDoFornecedor) {
+			throw new Exception("Você já possui uma oferta neste serviço!");
+		}
+	}
+
+    private List<Oferta> getOfertasServico(Long servicoId) throws Exception {
+    	Servico servico = this.getServicoByID(servicoId);
+
+    	return servico.getOfertasRecebidas();
+	}
+
+	public Oferta getOfertaNoServico(Long servicoId, Long ofertaId) throws Exception {
+		Servico servico = this.getServicoByID(servicoId);
+
+		boolean achou = false;
+		Iterator<Oferta> iterator =  servico.getOfertasRecebidas().iterator();
+		Oferta ofertaProcurada = null;
+		while(iterator.hasNext() && !achou) {
+			Oferta oferta = iterator.next();
+
+			if(oferta.getId().equals(ofertaId)) {
+				ofertaProcurada = oferta;
+				achou = true;
+			}
+		}
+
+		if(ofertaProcurada == null) {
+		    throw new Exception("Não foi possível localizar a oferta neste serviço!");
+        }
+		return ofertaProcurada;
+	}
+
 	public List<Servico> getServicosDisponiveisFornecedor(Fornecedor fornecedor){
     	
     	List<Servico> servicosDisponiveisFornecedor = new ArrayList<>();
@@ -54,7 +107,7 @@ public class ServicoService {
     	
     	for(Servico servico : servicos ) {
     		for(Especialidade especialidade : especialidadeFornecedor) {
-    			if(servico.getTipo().equalsIgnoreCase(especialidade.getNome()) && servico.getStatus().equals(TipoStatus.EM_ABERTO)) {
+    			if(servico.getTipo().equalsIgnoreCase(especialidade.getNome()) && servico.getStatus().equals(TipoStatus.AGUARDANDO_OFERTAS)) {
     				servicosDisponiveisFornecedor.add(servico);
     			}
     		}
@@ -70,10 +123,10 @@ public class ServicoService {
 
 	public List<Servico> getServicosClienteEmProgresso(Cliente cliente) {
 		List<Servico> todosServicos = new ArrayList<>();
-		List<Servico> servicosEmAberto = servicoRepository.findServicoClienteStatus(cliente, TipoStatus.EM_ABERTO);
+		List<Servico> servicosAguardandoOfertas = servicoRepository.findServicoClienteStatus(cliente, TipoStatus.AGUARDANDO_OFERTAS);
 		List<Servico> servicosAceitos = servicoRepository.findServicoClienteStatus(cliente, TipoStatus.ACEITO);
 		todosServicos.addAll(servicosAceitos);
-		todosServicos.addAll(servicosEmAberto);
+		todosServicos.addAll(servicosAguardandoOfertas);
 		
 		return todosServicos;
 	}
@@ -113,17 +166,32 @@ public class ServicoService {
 		return setServicosToDAO(servicosOrdenados);
 	}
 	
+	public Servico aceitarOferta(Servico servico, Oferta oferta) throws Exception {
+
+    	Fornecedor fornecedor = oferta.getFornecedor();
+
+		servico.setValor(oferta.getValor());
+		Servico servicoAtualizado = setServicoParaFornecedor(servico, fornecedor);
+
+		return servicoAtualizado;
+
+	}
+
 	public Servico setServicoParaFornecedor(Servico servico, Usuario fornecedor) throws Exception {
 		if(!(fornecedor instanceof Fornecedor)) {
 			throw new Exception("Apenas fornecedores podem aceitar serviços!");
 		}
 		
 		if(!servicoEhValidoParaFornecedor(servico, (Fornecedor) fornecedor)) {
-			throw new Exception("Você não possui a especialidade requerida para o serviço");
+			throw new Exception("O fornecedor não possui a especialidade requerida para o serviço");
 		}
 		
-		if(!servico.getStatus().equals(TipoStatus.EM_ABERTO)) {
-			throw new Exception("Você só pode aceitar serviços que estão em aberto!");
+		if(!servico.getStatus().equals(TipoStatus.AGUARDANDO_OFERTAS)) {
+			throw new Exception("Você só pode aceitar serviços que estão aguardando ofertas!");
+		}
+
+		if(!servico.getStatus().equals(TipoStatus.AGUARDANDO_OFERTAS)) {
+			throw new Exception("Esse serviço já possui uma oferta aceita!");
 		}
 		
 		Servico servicoAtualizado = servico;
@@ -131,8 +199,6 @@ public class ServicoService {
 		servicoAtualizado.setFornecedor((Fornecedor) fornecedor);
 	
 		return servicoRepository.saveAndFlush(servicoAtualizado);
-		
-		
 	}
 	
 	public boolean checarCliente(Servico servico, Cliente cliente){
@@ -248,11 +314,31 @@ public class ServicoService {
 		if(!checarServicoFornecedor(servico, fornecedor)) {
 			throw new Exception("Você só pode cancelar serviços aceitos por você!");
 		}
-		Servico servicoCancelado = servico;
-		servicoCancelado.setStatus(TipoStatus.EM_ABERTO);
+
+		Servico servicoCancelado = removeOfertaEmServico(servico, fornecedor);
+		servicoCancelado.setStatus(TipoStatus.AGUARDANDO_OFERTAS);
 		servicoCancelado.setFornecedor(null);
 		
 		return servicoRepository.saveAndFlush(servicoCancelado);
+	}
+
+	public Servico removeOfertaEmServico(Servico servico, Fornecedor fornecedor) {
+		boolean achou = false;
+		Iterator<Oferta> iterator =  servico.getOfertasRecebidas().iterator();
+
+		while(iterator.hasNext() && !achou) {
+			Oferta oferta = iterator.next();
+
+			if(oferta.getFornecedor().getId().equals(fornecedor.getId())) {
+				List<Oferta> listaAtualizada = servico.getOfertasRecebidas();
+				listaAtualizada.remove(oferta);
+				servico.setOfertasRecebidas(listaAtualizada);
+				achou = true;
+			}
+		}
+
+
+		return servico;
 	}
 
 	public Servico atualizarServico(Servico servico) {

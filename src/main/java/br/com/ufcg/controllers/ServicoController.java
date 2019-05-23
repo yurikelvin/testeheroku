@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.ufcg.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import br.com.ufcg.dao.ServicoDAO;
 import br.com.ufcg.domain.Cliente;
 import br.com.ufcg.domain.Fornecedor;
 import br.com.ufcg.domain.Servico;
+import br.com.ufcg.dto.ServicoDTO;
 import br.com.ufcg.services.ServicoService;
 import br.com.ufcg.services.UsuarioService;
 import br.com.ufcg.util.response.Response;
@@ -155,17 +157,26 @@ public class ServicoController {
 		}
 	}
 
-	@RequestMapping(value = "/api/servicos/fornecedor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public ResponseEntity<Response> setServicoParaFornecedor(HttpServletRequest request, @RequestBody Servico servico) {
+	@RequestMapping(value = "/api/cliente/servicos/{servicoId}/ofertas/{ofertaId}/aceitar", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	public ResponseEntity<Response> aceitarOferta(HttpServletRequest request, @PathVariable("servicoId") String servicoStringId, @PathVariable("ofertaId") String ofertaStringId) {
 		Response response;
 
 		try {
-			Fornecedor fornecedor = (Fornecedor) request.getAttribute("user");
-			Servico servicoAtualizado = servicoService.getServicoByID(servico.getId());
+			Long servicoId = Long.parseLong(servicoStringId);
+			Long ofertaId = Long.parseLong(ofertaStringId);
+			Cliente cliente = (Cliente) request.getAttribute("user");
 
-			servicoAtualizado = servicoService.setServicoParaFornecedor(servicoAtualizado, fornecedor);
+			Servico servico = servicoService.getServicoByID(servicoId);
 
-			response = new Response("Servico designado para voce com sucesso!", HttpStatus.OK.value(),
+			if(!cliente.getEmail().equals(servico.getCliente().getEmail())) {
+				response = new Response("Você só pode aceitar uma oferta de um serviço que você criou!", HttpStatus.BAD_REQUEST.value());
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+			}
+
+			Oferta oferta = servicoService.getOfertaNoServico(servicoId, ofertaId);
+			Servico servicoAtualizado = servicoService.aceitarOferta(servico, oferta);
+
+			response = new Response("A Oferta escolhida será a Oferta final do Serviço!", HttpStatus.OK.value(),
 					servicoAtualizado.toDAO());
 			return new ResponseEntity<>(response, HttpStatus.OK);
 
@@ -269,6 +280,24 @@ public class ServicoController {
 			response = new Response("Nao encontramos servicos disponiveis para voce", HttpStatus.ACCEPTED.value());
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 
+		} catch (Exception e) {
+			response = new Response(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@RequestMapping(value = "/api/fornecedor/servicos/{servicoId}/ofertas", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	public ResponseEntity<Response> cadastraOfertaNoServico(HttpServletRequest request, @PathVariable("servicoId") String servicoStringId, @RequestBody Oferta oferta) {
+		Response response;
+
+		try {
+			Long servicoId = Long.parseLong(servicoStringId);
+			Fornecedor fornecedor = (Fornecedor) request.getAttribute("user");
+			oferta.setFornecedor(fornecedor);
+			Servico servico = this.servicoService.adicionarOfertaNoServico(servicoId, oferta);
+			response = new Response("Oferta cadastrada com sucesso!", HttpStatus.CREATED.value(),
+					servico);
+			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} catch (Exception e) {
 			response = new Response(e.getMessage(), HttpStatus.BAD_REQUEST.value());
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

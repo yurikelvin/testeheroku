@@ -17,6 +17,8 @@ import br.com.ufcg.domain.Especialidade;
 import br.com.ufcg.services.EspecialidadeService;
 import br.com.ufcg.util.response.Response;
 
+import javax.annotation.PostConstruct;
+
 @RestController
 public class EspecialidadeController {
 
@@ -43,5 +45,20 @@ public class EspecialidadeController {
 	@GetMapping(value = "/api/especialidade", produces = "application/json")
 	public @ResponseBody List<Especialidade> listaEspecialidades() {
 		return especialidadeService.getEspecialidades();
+	}
+
+	@PostConstruct
+	public void boostrapEspecialidade() {
+		String[] nomesEspecialidades = new String[] {"Encanador", "Pedreiro", "Eletricista", "Marceneiro", "Serralheiro", "Serviço Geral", "Pintor" };
+
+		for (String nomeEspecialidade : nomesEspecialidades) {
+			try {
+				Especialidade especialidade = new Especialidade(nomeEspecialidade);
+				especialidadeService.criarEspecialidade(especialidade);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
 	}
 }

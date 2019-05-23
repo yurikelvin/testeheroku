@@ -1,10 +1,11 @@
 package br.com.ufcg.services;
 
-import br.com.ufcg.domain.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import br.com.ufcg.domain.Usuario;
 
 @Service
 public class EmailService {
